@@ -17,7 +17,7 @@ sh ./weeklyReportGene.sh -e "xxx@xx.com" -f "./xxx.log" -d 7
 ```
 * 参数说明
 ```shell
-Usage:[-f 输出文件目录，默认./2023-01-14log.log] [-d 统计多少天，默认5天] [-e email 默认为git global中设置的email][-h help]
+Usage:[-f 输出文件目录，默认./2023-01-14log.log] [-d 统计多少天，默认4天] [-e email 默认为git global中设置的email][-h help]
 ```
 
 ***********************
