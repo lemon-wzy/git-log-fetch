@@ -9,11 +9,11 @@ git log -a --author='xxx@xxx.com' --no-merges --pretty=format:" %s" --since="200
 #### 使用说明（* 需要确认当前目录下存在git仓库）
 * 直接使用
 ```shell
-sh ./weeklyReportGene.sh
+sh ./gitLogFetch.sh
 ```
 * 附加参数
 ```shell
-sh ./weeklyReportGene.sh -e "xxx@xx.com" -f "./xxx.log" -d 7 
+sh ./gitLogFetch.sh -e "xxx@xx.com" -f "./xxx.log" -d 7 
 ```
 * 参数说明
 ```shell
@@ -31,3 +31,4 @@ if [[ "$os_name" == "Linux" ]]; then
 elif [[ "$os_name" == "Darwin" ]]; then
     pre_date=$(date -v -1d +%Y-%m-%d)
 fi
+```
