@@ -6,10 +6,12 @@
 # Version   1.0                                                 #   
 #################################################################
 
+#默认参数设置
 day=4
 email=`git config user.email`
 outFile="./"$(date +%Y-%m-%d)"log.log"
 
+#读取命令行参数
 while getopts "f:d:e:h" arg
 do
     case "$arg" in
@@ -34,6 +36,7 @@ do
     esac
 done
 
+#提示说明
 echo "获取前："$day"天，邮箱为："$email"的git提交记录，输出到文件："$outFile""
 
 #计算从什么时候开始获取提交记录
@@ -64,5 +67,5 @@ if [ ! -e ".git" ]; then
     exit 0
 fi
 
-#获取提交记录
+#获取提交记录并输出到文件
 `git log -a --author="$email" --no-merges --pretty=format:"%s" --since="$since" > $outFile`
