@@ -17,7 +17,7 @@ sh ./gitLogFetch.sh -e "xxx@xx.com" -f "./xxx.log" -d 7
 ```
 * 参数说明
 ```shell
-Usage:[-f 输出文件目录，默认./2023-01-14log.log] [-d 统计多少天，默认4天] [-e email 默认为git global中设置的email][-h help]
+Usage:[-f 输出文件目录，默认./2023-01-14log.log] [-d 统计多少天，默认4天] [-e email 默认为git global中设置的email] [-s 存在git仓库的项目目录, 默认脚本存在的目录] [-h help]
 ```
 
 ***********************
@@ -31,4 +31,11 @@ if [[ "$os_name" == "Linux" ]]; then
 elif [[ "$os_name" == "Darwin" ]]; then
     pre_date=$(date -v -1d +%Y-%m-%d)
 fi
+```
+
+****************************************************************
+#### Version1.1新功能
+* 使用参数`-s` 可以自定义设置项目目录不需要移动脚本
+```shell
+sh ./gitLogFetch.sh -s xx/xxx/xx
 ```
