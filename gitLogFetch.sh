@@ -7,11 +7,18 @@
 #################################################################
 
 #默认参数设置
+#获取前几天的提交记录
 day=4
+#git提交记录的邮箱
 email=`git config user.email`
+#输出文件名
 outFile=""$(date +%Y-%m-%d)"log.log"
+#默认输出文件名
 defaultOutFile=$outFile
+#项目目录
 sourcePath="$(pwd)"
+#是否获取当天的提交记录
+isToday=false
 
 #脚本所在目录记录
 scriptPath="$(pwd)"
@@ -20,9 +27,12 @@ outPath=$scriptPath"/"$outFile
 
 
 #读取命令行参数
-while getopts "s:f:d:e:h" arg
+while getopts "s:f:d:e:nh" arg
 do
     case "$arg" in
+        n)
+        isToday=true
+        ;;
         f)
         outFile=$OPTARG
         ;;
@@ -101,6 +111,17 @@ if [ $sourcePath != "./" ] && [ $sourcePath != $scriptPath ]; then
     echo "切换到项目目录："$sourcePath""
     cd $sourcePath
 fi
+
+echo "this is isTody: $isToday"
+
+
+if [ $isToday = true ]; then
+    since=`date +%Y-%m-%d`
+    echo "获取当天的提交记录时间:"$since""
+fi
+
+#参数测试退出点
+# exit 0
 
 #获取提交记录并输出到文件
 echo "开始提取git提交记录..."
