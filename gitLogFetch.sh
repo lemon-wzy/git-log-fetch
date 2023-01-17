@@ -19,7 +19,6 @@ defaultOutFile=$outFile
 sourcePath="$(pwd)"
 #是否获取当天的提交记录
 isToday=false
-
 #脚本所在目录记录
 scriptPath="$(pwd)"
 #日志文件输出路径
@@ -62,9 +61,6 @@ if [ $defaultOutFile != $outFile ]; then
     outPath=$outFile
 fi
 
-#提示说明
-echo "获取前："$day"天，邮箱为："$email"的git提交记录，输出到文件："$outPath""
-
 #计算从什么时候开始获取提交记录
 since=`date -v -$day"d" +%Y-%m-%d`
 
@@ -81,7 +77,7 @@ function isLogFileFunc() {
     return 1
 }
 
-#获取文件名
+#定义获取文件名函数
 function getFileNameFunc() {
     if [ ! -d ${1%/*} ]; then
         echo "请输入正确的日志文件路径"
@@ -89,6 +85,7 @@ function getFileNameFunc() {
     fi
     fileName=${1##*/}
 }
+#获取文件名
 getFileNameFunc $outPath
 
 #判断输出文件是否为log文件
@@ -112,17 +109,24 @@ if [ $sourcePath != "./" ] && [ $sourcePath != $scriptPath ]; then
     cd $sourcePath
 fi
 
-echo "this is isTody: $isToday"
+#提示说明
+tips="获取前："$day"天，邮箱为："$email"的git提交记录，输出到文件："$outPath""
 
-
+#判断是否获取当天的提交记录
 if [ $isToday = true ]; then
-    since=`date +%Y-%m-%d`
-    echo "获取当天的提交记录时间:"$since""
+    since=`date -v -1d +%Y-%m-%d`
+    tips="获取当天，邮箱为："$email"的git提交记录，输出到文件："$outPath""
 fi
+
+#输出提示说明
+echo $tips
+
+#获取提交记录并输出到文件
+echo "开始提取git提交记录..."
+
 
 #参数测试退出点
 # exit 0
 
-#获取提交记录并输出到文件
-echo "开始提取git提交记录..."
+#执行git log命令
 `git log -a --author="$email" --no-merges --pretty=format:"%s" --since="$since" > $outPath`
