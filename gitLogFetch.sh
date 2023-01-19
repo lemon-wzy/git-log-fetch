@@ -23,12 +23,18 @@ isToday=false
 scriptPath="$(pwd)"
 #日志文件输出路径
 outPath=$scriptPath"/"$outFile
-
+#日期区间
+between=
+#其余参数
+shellParam=
 
 #读取命令行参数
-while getopts "s:f:d:e:nh" arg
+while getopts "b:s:f:d:e:nh" arg
 do
     case "$arg" in
+        b)
+        between=$OPTARG
+        ;;
         n)
         isToday=true
         ;;
@@ -46,7 +52,7 @@ do
         ;;
         h)
         echo "Usage:[-f 输出文件目录，默认脚本存在目录] [-d 统计多少天，默认"$day"天] [-e email 默认为git global中设置的email]
-           [-s 存在git仓库的项目目录, 默认脚本存在的目录] [-n 获取脚本执行当天的git提交记录] [-h help]"
+           [-s 存在git仓库的项目目录, 默认脚本存在的目录] [-n 获取脚本执行当天的git提交记录] [ -b 添加时间区间 导出给定时间段之间的git提交记录 ] [-h help]"
         exit
         ;;
         ?)
@@ -55,6 +61,17 @@ do
         ;;
     esac
 done
+
+#定义拉取git提交记录函数
+function gitLogFetchFunc() {
+    if [ -n "$1" ]; then
+        echo "$1"
+    fi
+    echo "开始提取git提交记录..."
+    `git log -a --author="$email" --no-merges --pretty=format:"%s" --since="$since" $2 > $outPath` 
+    exit 0
+}
+
 
 #设置日志文件输出路径
 if [ $defaultOutFile != $outFile ]; then
@@ -116,17 +133,52 @@ tips="获取前："$day"天，邮箱为："$email"的git提交记录，输出到
 if [ $isToday = true ]; then
     since=`date -v -1d +%Y-%m-%d`
     tips="获取当天，邮箱为："$email"的git提交记录，输出到文件："$outPath""
+    gitLogFetchFunc $tips
 fi
 
-#输出提示说明
-echo $tips
+#判断字符串包含
+function containStr() {
+    if [ -z "$1" ]; then
+        return 1
+    fi
+    result=$(echo "$1" | grep "$2")
+    if [ -z "$result" ]; then
+        return 1
+    else
+        return 0
+    fi
+}
 
-#获取提交记录并输出到文件
-echo "开始提取git提交记录..."
+#校验时间格式(只校验格式，不校验时间是否合法)
+function checkDateFormt() {
+    result=$(echo "$1" | egrep "([0-9][0-9][0-9][0-9])-(0[1-9]|[1][0-2])-(0[1-9]|[1-2][0-9]|3[0-1])")
+    if test -z $result; then
+        return 1
+    fi
+    return 0
+}
 
+#校验时间区间
+if containStr "$between" ","; then
+    array=(${between//,/ })
+    if [ ${#array[@]} -ne 2 ]; then
+        echo "时间区间格式错误，请检查！"
+        exit 0
+    fi
+    for item in ${array[@]}
+    do 
+        if ! checkDateFormt $item; then
+            echo "时间区间格式错误，请检查！"
+            exit 0
+        fi
+    done
+    since=${array[0]}
+    until=${array[1]}
+    shellParam="$shellParam""--until=$until"
+    tips="获取从："$since"到"$until"，邮箱为："$email"的git提交记录，输出到文件："$outPath""
+fi
 
 #参数测试退出点
 # exit 0
 
-#执行git log命令
-`git log -a --author="$email" --no-merges --pretty=format:"%s" --since="$since" > $outPath`
+gitLogFetchFunc $tips $shellParam
