@@ -3,7 +3,7 @@
 # Function  导出项目git日志 方便撰写周报                            #
 # Auhtor    wangzy                                              #    
 # Date      2023-01-14 11:29                                    #
-# Version   1.2                                                 #   
+# Version   1.3                                                 #   
 #################################################################
 
 #默认参数设置
@@ -51,13 +51,17 @@ do
         sourcePath=$OPTARG
         ;;
         h)
-        echo "Usage:[-f 输出文件目录，默认脚本存在目录] [-d 统计多少天，默认"$day"天] [-e email 默认为git global中设置的email]
-           [-s 存在git仓库的项目目录, 默认脚本存在的目录] [-n 获取脚本执行当天的git提交记录] [ -b 添加时间区间 导出给定时间段之间的git提交记录 ] [-h help]"
-        exit
+        echo "Usage:[-f 输出文件目录，默认脚本存在目录] 
+                    [-d 统计多少天，默认"$day"天] 
+                    [-e email 默认为git global中设置的email]
+                    [-s 存在git仓库的项目目录, 默认脚本存在的目录] 
+                    [-n 获取脚本执行当天的git提交记录] 
+                    [ -b 添加时间区间 导出给定时间段之间的git提交记录 ] [-h help]"
+        exit 0
         ;;
         ?)
         echo "Unknown option"
-        exit
+        exit 0
         ;;
     esac
 done
